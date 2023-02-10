@@ -1,30 +1,49 @@
 import useFunctions from "../hooks/useFunctions"
+import './calculatorStyles.css'
+import Button from "./button"
 
 export default function Calculator(){
 
-    const {numbers, handleClick, handleInput} = useFunctions()
+    const {
+        prevVal,
+        currentVal,
+        handleClick, 
+        handleInput, 
+        operator, 
+        clearScreen,
+        showResult
+    } = useFunctions()
+    console.log(prevVal, currentVal)
 
     return (
-        <div>
-            <div>
-                <input type="text" readOnly style={{outline: 'none', cursor:'none'}} id="input" value = {numbers.displayVal}/>
+        <div className="calculator-container">
+            <div className="display">
+                <div className="prev-display">{prevVal}{prevVal && operator}</div>
+                <div className="current-display">{currentVal}</div>
             </div>
-            <div>
-                <div>
-                    {[1,2,3,4,5,6,7,8,9,0].map(item => {
-                        return (
-                            <div key={item} id={item} style={{background:'lightgray', width:'fit-content', padding:'1rem', margin:'5px' }} onClick={handleInput}>   
-                                {item}
-                            </div>
-                        )
-                    })}
-                </div>
-                <div>
-                    <button data-op-type="add" onClick={handleClick}>Add</button>
-                    <button data-op-type="subtract" onClick={handleClick}>Subtract</button>
-                    <button data-op-type="multiply" onClick={handleClick}>Multiply</button>
-                    <button data-op-type="divide" onClick={handleClick}>Divide</button>
-                </div>
+            
+            <div className="btn-container">
+                <Button classname="all-clear nums" id="AC" handler={clearScreen}/>
+                <Button classname="clear nums" id="C" handler={clearScreen}/>
+                {[1,2,3].map(btn => {
+                    return <Button id={btn} key={btn} classname="nums" handler={handleInput}/>
+                })}
+                <Button id="+" classname="nums" handler={handleClick}/>
+                
+                {[4,5,6].map(btn => {
+                    return <Button id={btn} key={btn} classname="nums" handler={handleInput}/>
+                })}
+                <Button id="-" classname="nums" handler={handleClick}/>
+
+                {[7,8,9].map(btn => {
+                    return <Button id={btn} key={btn} classname="nums" handler={handleInput}/>
+                })}
+                <Button id="*" classname="nums" handler={handleClick}/>
+
+                <Button id={0} classname="nums" handler={handleInput}/>
+                <Button id="." classname="nums" handler={handleInput}/>
+                <Button id="=" classname="nums" handler={showResult}/> 
+                <Button id="/" classname="nums" handler={handleClick}/>
             </div>
         </div>
     )

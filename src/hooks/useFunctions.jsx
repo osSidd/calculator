@@ -1,50 +1,99 @@
 import { useState, useEffect } from "react"
 
-import useCalculator from "./useCalculator"
-
 export default function useFunctions(){
-    const calculator = useCalculator()
 
-    const [numbers ,setNumbers] = useState({
-        nums: [0],
-        val : 0,
-        displayVal: 0
-    })
-
+  const [prevVal, setPrevVal] = useState('')
+    const [currentVal, setCurrentVal] = useState('')
     const [operator, setOperator] = useState(null)
-    const [total, setTotal] = useState(0)
 
+    //handle input by clicking numbers
     function handleInput(e){
-        const id = e.target.id
-        setNumbers(prev => ({
-            ...prev,
-            val: parseInt(prev.val + id),
-            displayVal: parseInt(prev.val + id),
-        }))
+      const id = e.target.id
+      setCurrentVal(prev => {
+       if(id === '.'){
+        return !prev.includes('.') ? prev + id : prev
+       }
+       return prev + id
+      })
     }
 
+    //handle the click of the operators
     function handleClick(e){
-        setOperator(e.target.dataset.opType)
-        setNumbers(prev => ({
-          ...prev,
-          nums: [total, parseInt(prev.val)],
-          val: 0,
-        }))
+      setOperator(e.target.id)
+
+      if(currentVal === ''){
+        return
       }
 
-      useEffect(() => {
-        if(operator){
-          setTotal(calculator[operator](numbers.nums))
-          setNumbers(prev => ({
-            ...prev,
-            displayVal: total
-          }))
+      if(prevVal === ''){
+        setPrevVal(currentVal)
+        setCurrentVal('')
+        return
+      }
+
+      if(prevVal !== ''){
+        const result = compute(parseFloat(prevVal), parseFloat(currentVal))
+        setPrevVal(result.toString())
+        setCurrentVal('')
+      }         
+    }
+
+    //compute function to do the calculation
+    function compute(prev, current){
+      if(operator){
+        switch(operator){
+          case '+':
+            return prev + current
+            break
+          case '-':
+            return prev - current
+            break
+          case '*':
+            return prev * current
+            break
+          case '/':
+            return prev / current
+            break
+          default:
+            return
         }
-      }, [numbers.nums, total])
-
-      return {
-        numbers,
-        handleInput,
-        handleClick,
       }
+      return null
+    }
+
+    //clear screen when C and AC are pressed
+    function clearScreen(e){
+      if(e.target.id === 'AC'){
+        setCurrentVal('')
+        setPrevVal('')
+        setOperator(null)
+      }
+
+      if(e.target.id === 'C'){
+        setCurrentVal(prev => prev.slice(0, prev.length-1))
+      }
+    }
+
+    //show result of computation when = is pressed
+    function showResult(e){
+      if(prevVal === '')
+        return
+      
+      if(currentVal === ''){
+        setCurrentVal(prevVal)
+        return
+      }
+      setCurrentVal(compute(parseFloat(prevVal), parseFloat(currentVal)).toString())
+      setPrevVal('')
+    }
+
+    return {
+      prevVal,
+      currentVal,
+      handleInput,
+      handleClick,
+      operator,
+      clearScreen,
+      showResult
+    }
 }
