@@ -10,6 +10,11 @@ export default function useFunctions(){
     function handleInput(e){
       const id = e.target.id
       setCurrentVal(prev => {
+        if(prev === 'Infinity' || prev === 'NaN'){
+          console.log('true')
+          return id
+        }
+        
        if(id === '.'){
         return !prev.includes('.') ? prev + id : prev
        }
@@ -70,6 +75,11 @@ export default function useFunctions(){
       }
 
       if(e.target.id === 'C'){
+
+        if(currentVal === 'Infinity' || currentVal === 'NaN'){
+          setCurrentVal('')
+        }
+
         setCurrentVal(prev => prev.slice(0, prev.length-1))
       }
     }
